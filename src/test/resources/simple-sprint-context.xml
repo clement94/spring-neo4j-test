@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:neo4j="http://www.springframework.org/schema/data/neo4j"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       	http://www.springframework.org/schema/beans 
+       	http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/data/neo4j
+		http://www.springframework.org/schema/data/neo4j/spring-neo4j-2.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:spring-configured/>
+    <context:annotation-config/>
+    
+    <context:component-scan base-package="fr.simple.nosqltest" />
+    
+    <neo4j:repositories base-package="fr.simple.nosqltest"/>
+    
+    <!-- Neo4j configuration (creates Neo4jTemplate) -->
+	<neo4j:config graphDatabaseService="graphDatabaseService" />
+	
+
+	<!-- For unit tests : 
+	With these two following lines (uncomment them to test), datas are well recorded in directory database
+	and rollback on failed transaction works -->
+<!-- 	<neo4j:config storeDirectory="target/neo4j-db"/>  -->
+<!--     <tx:annotation-driven mode="proxy"/> -->
+
+<!-- 	But in a real world, I would like to use a Neo4J server. -->
+<!-- 	Rollbacks are not working with this following configuration :  -->
+	<bean id="graphDatabaseService"
+		class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">
+		<constructor-arg value="http://localhost:7474/db/data/" />
+ 	</bean>
+	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+
+</beans>
+
